@@ -32,10 +32,17 @@ import {
 } from "@/components/ui/breadcrumb";
 import { useRouter } from "next/navigation";
 type Props = {};
-
+interface UserData {
+  login: string;
+  avatar_url?: string;
+}
 function DashboardNavbar({}: Props) {
   const { setTheme } = useTheme();
-  const { userData, isLoggedIn, logout } = useAuth();
+  const { userData, isLoggedIn, logout } = useAuth() as {
+    userData: UserData;
+    isLoggedIn: boolean;
+    logout: () => void;
+  };
   const router = useRouter();
   const handleAuth = () => {
     if (isLoggedIn) {

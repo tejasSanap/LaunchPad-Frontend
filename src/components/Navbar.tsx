@@ -23,9 +23,17 @@ import { Router } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
+interface UserData {
+  login: string;
+  avatar_url?: string;
+}
 function Navbar() {
   const { setTheme } = useTheme();
-  const { isLoggedIn, logout, userData } = useAuth();
+  const { userData, isLoggedIn, logout } = useAuth() as {
+    userData: UserData;
+    isLoggedIn: boolean;
+    logout: () => void;
+  };
   const router = useRouter();
 
   const handleAuth = () => {
