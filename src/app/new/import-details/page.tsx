@@ -33,11 +33,22 @@ import { useTheme } from "next-themes";
 import axiosInstance from "@/axiosConfig";
 type Props = {};
 
+interface DeploymentData {
+  deploymentId: string;
+  deployementDomain?: string;
+  subDomain?: string;
+}
+
+type LogEntry = {
+  timestamp: string;
+  log: string;
+};
+
 function page({}: Props) {
   const router = useRouter();
   const { theme, setTheme } = useTheme();
   const searchParams = useSearchParams();
-  const repoName = searchParams.get("repoName");
+  const repoName = searchParams.get("repoName") || "";
   const url = searchParams.get("cloneUrl");
 
   const [projectName, setProjectName] = useState(repoName);
@@ -46,12 +57,12 @@ function page({}: Props) {
   const [subDomain, setSubDomain] = useState("");
   const [loading, setLoading] = useState(false);
   const [deployed, setDeployed] = useState(false);
-  const [logs, setLogs] = useState([]);
-  const [deploymentId, setDeploymentId] = useState(
-    "4f912104-3e1a-4150-8fe4-90e8f3a42d42"
-  );
+  const [logs, setLogs] = useState<LogEntry[]>([]);
+  const [deploymentId, setDeploymentId] = useState("");
 
-  const [deployementData, setDeployementData] = useState({});
+  const [deployementData, setDeployementData] = useState<DeploymentData | null>(
+    null
+  );
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -85,7 +96,7 @@ function page({}: Props) {
         console.log("first", deployementData);
         try {
           const response = await axiosInstance.get(
-            `/logs/${deployementData.deploymentId}`
+            `/logs/${deployementData?.deploymentId}`
           );
           console.log("polling the logs", response);
           let logs = response.data.logs;
@@ -222,8 +233,8 @@ function page({}: Props) {
                         {logs.map((log, index) => (
                           <>
                             <div className="flex gap-4">
-                              <p>{log.timestamp.split(" ")[1]}</p>
-                              <p>{log.log}</p>
+                              <p>{log?.timestamp.split(" ")[1]}</p>
+                              <p>{log?.log}</p>
                             </div>
                           </>
                         ))}
@@ -242,21 +253,21 @@ function page({}: Props) {
                         <div className="flex items-center gap-4">
                           <Label>Deployement</Label>
                           <a
-                            href={`http://${deployementData.deployementDomain}.localhost:8000`}
+                            href={`http://${deployementData?.deployementDomain}.localhost:8000`}
                             target="_blank"
                             rel="noopener noreferrer"
                           >
-                            {`http://${deployementData.deployementDomain}.localhost:8000`}
+                            {`http://${deployementData?.deployementDomain}.localhost:8000`}
                           </a>
                         </div>
                         <div className="flex items-center gap-4">
                           <Label>Domains</Label>
                           <a
-                            href={`http://${deployementData.subDomain}.localhost:8000`}
+                            href={`http://${deployementData?.subDomain}.localhost:8000`}
                             target="_blank"
                             rel="noopener noreferrer"
                           >
-                            {`http://${deployementData.subDomain}.localhost:8000`}
+                            {`http://${deployementData?.subDomain}.localhost:8000`}
                           </a>
                         </div>
                       </AccordionContent>

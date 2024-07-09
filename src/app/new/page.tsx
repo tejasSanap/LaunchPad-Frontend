@@ -10,11 +10,23 @@ import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 
 type Props = {};
+type UserData = {
+  repos_url: string;
+};
+type Repository = {
+  name: string;
+  owner: {
+    login: string;
+    avatar_url: string;
+  };
+  clone_url: string;
+};
 
 function page({}: Props) {
   const router = useRouter();
-  const { userData } = useAuth();
-  const [repositories, setRepositories] = useState([]);
+  const { userData } = useAuth() as { userData: UserData | null };
+
+  const [repositories, setRepositories] = useState<Repository[]>([]);
 
   useEffect(() => {
     const fetchRepositories = async () => {
@@ -44,7 +56,7 @@ function page({}: Props) {
     fetchRepositories();
   }, [userData]);
 
-  const handleImport = (repo) => {
+  const handleImport = (repo: Repository) => {
     const queryParams = new URLSearchParams({
       repoName: repo.name,
       owner: repo.owner.login,
