@@ -10,7 +10,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useRouter, useSearchParams } from "next/navigation";
-import React, { useEffect, useState } from "react";
+import React, { Suspense, useEffect, useState } from "react";
 import {
   Select,
   SelectContent,
@@ -44,7 +44,7 @@ type LogEntry = {
   log: string;
 };
 
-function page({}: Props) {
+const ImportDetails = () => {
   const router = useRouter();
   const { theme, setTheme } = useTheme();
   const searchParams = useSearchParams();
@@ -281,6 +281,12 @@ function page({}: Props) {
       </div>
     </>
   );
-}
+};
 
-export default page;
+export default function ImportDetailsPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <ImportDetails />
+    </Suspense>
+  );
+}
